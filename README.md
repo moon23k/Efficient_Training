@@ -32,6 +32,8 @@ reformer 논문의 implementation
 
 <br>
 
+**Parameter Sharing**
+
 <br>
 <br>
 
