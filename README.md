@@ -41,3 +41,11 @@ reformer 논문의 implementation
 <br>
 
 ## Reference
+**Attention is All you Need**
+
+**Reformer**
+
+**Pruning**
+
+**Quantization**
+<br>
