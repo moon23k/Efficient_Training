@@ -22,6 +22,19 @@ reformer 논문의 implementation
 <br>
 <br>
 
+## Techniques
+
+**Prunuing**
+
+<br>
+
+**Quantization**
+
+<br>
+
+<br>
+<br>
+
 ## Result
 
 <br>
