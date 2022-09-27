@@ -35,6 +35,10 @@ reformer 논문의 implementation
 **Parameter Sharing**
 
 <br>
+
+**Distillation**
+
+<br>
 <br>
 
 ## Result
