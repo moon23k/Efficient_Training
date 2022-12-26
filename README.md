@@ -1,30 +1,35 @@
-## Lightening_Ablation
+## Fast_Ablation
 
-Most of the recent research is focused on increasing the size of the model to get better performance.
+Recently, Transformer-Based Pretrained Language Models show great performances in various NLP tasks.
 
-Large sized models have a better expressive ablility, there is a strong tendency to drive good performance. However, it brings problem that the calculation cost becomes excessively high.
+PLM shows excellent performance based on a large number of parameters.
+
+Therefore, those consume excessive computational cost and time on training and inference processes.
 
 To mend this problem, this repo covers how to keep the model lightweight while still maintaining acceptable performance. 
 
 <br>
 <br>
 
+## Strategies
 
-## Model Lightening Strategies
-
-**Prunuing**
-
-<br>
-
-**Quantization**
+**Hugging Face**
 
 <br>
 
-**Parameter Sharing**
+**ByteDance**
 
 <br>
 
-**Distillation**
+**DeepSpeed**
+
+<br>
+
+**Turbo Transformers**
+
+<br>
+
+**Custom**
 
 <br>
 <br>
@@ -35,11 +40,4 @@ To mend this problem, this repo covers how to keep the model lightweight while s
 <br>
 
 ## Reference
-**Attention is All you Need**
-
-**Reformer**
-
-**Pruning**
-
-**Quantization**
-<br>
+**[LightSeq: A High Performance Inference Library for Transformers](https://arxiv.org/pdf/2010.13887.pdf)**
