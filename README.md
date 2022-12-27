@@ -21,6 +21,13 @@ This repo presents a set of experiments for efficient GPU memory management.
 
 **Mixed precision training**
 
+<br>
+
+**Tensor RT**
+
+<br>
+
+**Optimizer**
 
 <br>
 <br>
