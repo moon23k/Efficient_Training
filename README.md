@@ -1,35 +1,26 @@
-## Fast_Ablation
+## Memory_Ablation
 
-Recently, Transformer-Based Pretrained Language Models show great performances in various NLP tasks.
+Recently, large-scale models are playing a prominent role in various AI tasks. However, as large models have high expressive power, they are expensive to compute. This causes problems both in train process and inference process.
 
-PLM shows excellent performance based on a large number of parameters.
+The key to mend this problem is managing memory in efficient fashion. 
+This repo presents a set of experiments for efficient GPU memory management.
 
-Therefore, those consume excessive computational cost and time on training and inference processes.
-
-To mend this problem, this repo covers how to keep the model lightweight while still maintaining acceptable performance. 
 
 <br>
 <br>
 
 ## Strategies
 
-**Hugging Face**
+**Gradient Accumulate**
 
 <br>
 
-**ByteDance**
+**Gradient Checkpointing**
 
 <br>
 
-**DeepSpeed**
+**Mixed precision training**
 
-<br>
-
-**Turbo Transformers**
-
-<br>
-
-**Custom**
 
 <br>
 <br>
