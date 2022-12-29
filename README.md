@@ -9,7 +9,7 @@ This repo presents a set of experiments for efficient GPU memory management.
 <br>
 <br>
 
-## Strategies
+## Train Strategies
 
 **Gradient Accumulate**
 
@@ -20,6 +20,10 @@ This repo presents a set of experiments for efficient GPU memory management.
 <br>
 
 **Mixed precision training**
+
+<br>
+
+**Pruning**
 
 <br>
 
