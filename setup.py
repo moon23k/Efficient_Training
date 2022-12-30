@@ -1,4 +1,4 @@
-import os, re, json
+import os, json
 from datasets import load_dataset
 from transformers import T5TokenizerFast
 
@@ -23,16 +23,17 @@ def process_nmt(orig_data, tokenizer, volumn=12000):
         dif_condition = abs(src_len - trg_len) < max_diff
 
         if max_condition & min_condition & dif_condition:
-            temp_dict = dict()
+            temp = dict()
             
             src_tokenized = tokenizer(prefix + src, max_length=512, truncation=True)
             trg_tokenized = tokenizer(trg, max_length=512, truncation=True)
 
-            temp_dict['input_ids'] = src_tokenized['input_ids']
-            temp_dict['attention_mask'] = src_tokenized['attention_mask']
-            temp_dict['labels'] = trg_tokenized['input_ids']
+            temp['input_ids'] = src_tokenized['input_ids']
+            temp['attention_mask'] = src_tokenized['attention_mask']
+            temp['labels'] = trg_tokenized['input_ids']
             
-            processed.append(temp_dict)
+            processed.append(temp)
+            del temp
             
             #End condition
             volumn_cnt += 1
