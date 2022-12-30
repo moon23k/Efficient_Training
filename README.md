@@ -68,6 +68,19 @@ This is similar to the idea behind FP16 training where using variables with lowe
 
 ## Result
 
+According to the huggingface description, the effect of each setting on speed and memory is as follows.
+| Method | Speed | Memory |
+| :--- | :---: | :---: |
+| Mixed precision training | Y | (N) |
+| Gradient accumulation | N | Y |
+| Gradient checkpointing | N | Y |
+| Optimizer choice | Y | Y |
+
+<br>
+
+Below are the actual results for each method.
+
+
 <br>
 <br>
 
