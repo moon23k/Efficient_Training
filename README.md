@@ -3,8 +3,10 @@
 Recently, large-scale models are playing a prominent role in various AI tasks. However, as large models have high expressive power, they are expensive to compute. This causes problems both in train process and inference process.
 
 The key to mend this problem is managing memory in efficient fashion. 
-This repo presents a set of experiments for efficient GPU memory management.
+This repo presents a set of experiments for efficient GPU memory management. <br>
 
+In the Experiment, we used pretrained T5-Small Model, and corresponding T5 Tokenizer, and WMT14 Dataset.
+For a fair comparison, the rest of the variables except for the training method are fixed equally.
 
 <br>
 <br>
