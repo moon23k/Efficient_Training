@@ -8,7 +8,6 @@ def process_nmt(orig_data, tokenizer, volumn=12000):
     min_len = 10 
     max_len = 300
     max_diff = 50
-    prefix = 'translate English to German: '
 
     volumn_cnt = 0
     processed = []
@@ -24,9 +23,8 @@ def process_nmt(orig_data, tokenizer, volumn=12000):
 
         if max_condition & min_condition & dif_condition:
             temp = dict()
-            
-            src_tokenized = tokenizer(prefix + src, max_length=512, truncation=True)
-            trg_tokenized = tokenizer(trg, max_length=512, truncation=True)
+            src_tokenized = tokenizer(src)
+            trg_tokenized = tokenizer(trg)
 
             temp['input_ids'] = src_tokenized['input_ids']
             temp['attention_mask'] = src_tokenized['attention_mask']

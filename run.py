@@ -14,23 +14,18 @@ from pynvml import (nvmlInit,
 
 
 
-def load_model(config):
-    
-    model = T5ForConditionalGeneration.from_pretrained('t5-small')
-    
-    return model
-
-
 class Config(object):
     def __init__(self, args):
         self.mode = args.mode
         self.strategy = args.strategy
+        self.mname = 't5-small'
 
         self.n_epochs = 1
         self.batch_size = 32
         self.learning_rate = 1e-4
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
+        self.ckpt = f"ckpt/strategy_{self.strategy}"
         self.output_dir = f"outputs/strategy_{strategy}/output"
         self.logging_dir = f"outputs/strategy_{strategy}/logging"
         
@@ -43,6 +38,23 @@ class Config(object):
     def print_attr(self):
         for attribute, value in self.__dict__.items():
             print(f"* {attribute}: {value}")
+
+
+
+def load_model(config):
+    if config.mode == 'train':
+        model = T5ForConditionalGeneration.from_pretrained(config.mname)
+    else:
+        model_config = T5Config.from_pretrained(config.mname)
+        model = T5ForConditionalGeneration(model_config)        
+        ckpt = config.ckpt
+        assert os.path.exists(ckpt)
+        model_state = torch.load(ckpt, map_location=config.device)['model_state_dict']
+        model.load_state_dict(model_state)
+    
+    return model.to(config.device)
+
+
 
 
 def print_memory():
@@ -86,7 +98,7 @@ def main(args):
     set_seed(42)
     config = Config(args)
     model = load_model(config)
-    tokenizer = T5TokenizerFast.from_pretrained('t5-small', model_max_length=512)
+    tokenizer = T5TokenizerFast.from_pretrained(config.mname, model_max_length=512)
 
     if config.gradient_checkpointing:
         model.config.use_cache = False
@@ -107,6 +119,7 @@ def main(args):
                           eval_dataset=valid_dataset,
                           data_collator=data_collator)
         trainer.train()
+        model.save(config.ckpt)
 
     elif args.mode == 'test':
         pass
