@@ -39,38 +39,37 @@ Adafactor is one of the optimizers which can alleviate the aforementioned memory
 
 <br><br>
 
-**Pruning**
-
-<br><br>
-
-**Tensor RT**
-
-<br><br>
-
 ## Experimental Setups
+
+### Common Setups
+* **Model** : T5 Small <br>
+* **Dataset** : WMT14 En-De Translation Dataset (Train: 10,000 / Valid: 1,000 / Test 1,000 each) <br>
+* **Batch Size**: 32 <br>
+* **Device**: GPU <br><br>
+
+
+### Strategy Setups
+
+|  | Strategy_01 | Strategy_02 | Strategy_03 | Strategy_04 | Strategy_05 |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **Mixed precision training** | N | Y | Y | Y | Y |
+| **Gradient accumulation**    | N | N | Y | Y | Y |
+| **Gradient checkpointing**   | N | N | N | Y | Y |
+| **Optimizer choice**         | N | N | N | N | Y |
 
 <br><br>
 
 ## Result
 
-According to the huggingface description, the effect of each setting on speed and memory is as follows.
-| Method | Speed | Memory |
-| :--- | :---: | :---: |
-| Mixed precision training | Y | (N) |
-| Gradient accumulation | N | Y |
-| Gradient checkpointing | N | Y |
-| Optimizer choice | Y | Y |
-
-<br>
-
-Below are the actual results for each method.
+|  | Strategy_01 | Strategy_02 | Strategy_03 | Strategy_04 | Strategy_05 |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **Training Time**            | - | - | - | - | - |
+| **Best Valid Loss**          | - | - | - | - | - |
 
 
 <br>
 <br>
 
 ## Reference
-
-**[LightSeq: A High Performance Inference Library for Transformers](https://arxiv.org/pdf/2010.13887.pdf)**
-
+**[LightSeq: A High Performance Inference Library for Transformers](https://arxiv.org/pdf/2010.13887.pdf)** <br>
 **[HuggingFace Efficient Training Docs](https://huggingface.co/docs/transformers/perf_train_gpu_one)**
