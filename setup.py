@@ -1,68 +1,86 @@
-import os, json
+import os, re, json, random
 from datasets import load_dataset
-from transformers import T5TokenizerFast
 
 
 
-def process_nmt(orig_data, tokenizer, volumn=12000):
-    min_len = 10 
-    max_len = 300
-    max_diff = 50
 
-    volumn_cnt = 0
-    processed = []
-    
-    for elem in orig_data:
-        src, trg = elem['en'].lower(), elem['de'].lower()
-        src_len, trg_len = len(src), len(trg)
+def fetch_agnews(orig_data):
+    fetched = []
+    tot_volumn = 12000
+    class_volumn = 12000 // 4
+    class1_cnt, class2_cnt, class3_cnt, class4_cnt = 0, 0, 0, 0
+    class1_data, class2_data, class3_data, class4_data = [], [], [], []
 
-        #define filtering conditions
-        min_condition = (src_len >= min_len) & (trg_len >= min_len)
-        max_condition = (src_len <= max_len) & (trg_len <= max_len)
-        dif_condition = abs(src_len - trg_len) < max_diff
+    for elem in orig_data['train']:
+        curr_volumn = class1_cnt + class2_cnt + class3_cnt + class4_cnt
+        
+        if curr_volumn == tot_volumn:
+            break
 
-        if max_condition & min_condition & dif_condition:
-            temp = dict()
-            src_tokenized = tokenizer(src)
-            trg_tokenized = tokenizer(trg)
+        text = elem['text'].lower()
+        text = re.sub(r'\\+', ' ', text)
+        text = re.sub(r'\s{2,}', ' ', text)
+        text = re.sub(r'&lt;b&gt;', ' ', text)
+        label = elem['label']
 
-            temp['input_ids'] = src_tokenized['input_ids']
-            temp['attention_mask'] = src_tokenized['attention_mask']
-            temp['labels'] = trg_tokenized['input_ids']
-            
-            processed.append(temp)
-            del temp
-            
-            #End condition
-            volumn_cnt += 1
-            if volumn_cnt == volumn:
-                break
+        if label == 0 and class1_cnt < class_volumn:
+            class1_cnt += 1
+            class1_data.append({'x': text, 'y': label})
+            continue
+        
+        elif label == 1 and class2_cnt < class_volumn:
+            class2_cnt += 1
+            class2_data.append({'x': text, 'y': label})
+            continue
+        
+        elif label == 2 and class3_cnt < class_volumn:
+            class3_cnt += 1
+            class3_data.append({'x': text, 'y': label})
+            continue
+        
+        elif label == 3 and class4_cnt < class_volumn:
+            class4_cnt += 1
+            class4_data.append({'x': text, 'y': label})
 
-    return processed
+    fetched = [elem for elem1, elem2, elem3, elem4 \
+               in zip(class1_data, class2_data, class3_data, class4_data) \
+               for elem in (elem1, elem2, elem3, elem4)]
+
+    return fetched
 
 
-def save_data(data_obj):
-    #split data into train/valid/test sets
-    train, valid, test = data_obj[:-2000], data_obj[-2000:-1000], data_obj[-1000:]
-    data_dict = {k:v for k, v in zip(['train', 'valid', 'test'], [train, valid, test])}
 
-    for key, val in data_dict.items():
-        with open(f'data/{key}.json', 'w') as f:
-            json.dump(val, f)        
-        assert os.path.exists(f'data/{key}.json')    
+def split_shuffle(fetched):
+    train_data = fetched[:-2000]
+    valid_data = fetched[-2000:-1000]
+    test_data = fetched[-1000:]
+
+    random.shuffle(train_data)
+    random.shuffle(valid_data)
+    random.shuffle(test_data)
+
+    return train_data, valid_data, test_data
+
+
+
+def save_data(train_data, valid_data, test_data):
+    for key, val in zip(['train', 'valid', 'test'], [train_data, valid_data, test_data]):
+        
+        f_name = f'data/{key}.json'
+
+        with open(f_name, 'w') as f:
+            json.dump(val, f)
+        
+        assert os.path.exists(f_name)
 
 
 
 def main():
-    #Load Original Data & Tokenizer
-    orig = load_dataset('wmt14', 'de-en', split='train')['translation']
-    tokenizer = T5TokenizerFast.from_pretrained('t5-small', model_max_length=512)
+    orig_data = load_dataset('ag_news')
+    fetched_data = fetch_agnews(orig_data)
+    train_data, valid_data, test_data = split_shuffle(fetched_data)
+    save_data(train_data, valid_data, test_data)
 
-    #PreProcess Data
-    processed = process_nmt(orig, tokenizer)
-    
-    #Save Data
-    save_data(processed)
 
 
 if __name__ == '__main__':
