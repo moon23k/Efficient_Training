@@ -1,4 +1,4 @@
-import argparse, torch
+import json, argparse, torch
 from utils import set_trainer, load_dataset
 from transformers import (
     set_seed, AutoTokenizer, 
@@ -12,7 +12,7 @@ class Config(object):
     def __init__(self, strategy):
 
         self.strategy = strategy        
-        self.mname = 'albert-base-v2'
+        self.mname = 'bert-base-uncased'
         
         self.lr = 1e-5
         self.n_epochs = 5
@@ -58,12 +58,18 @@ def main(strategy):
     trainer = set_trainer(config, model, tokenizer, train_dataset, valid_dataset)    
     
     #Training
-    trainer.train()
+    torch.cuda.reset_max_memory_allocated()
+    train_output = trainer.train()
+    gpu_memory = torch.cuda.max_memory_allocated()
     
     #Evaluating
-    predictions = trainer.predict(test_dataset)
-    #print_rst(predictions)
-
+    eval_output = trainer.evaluate(test_dataset)
+    
+    #Save Training and Evaluation Rst Report
+    report = {**train_output.metrics, **eval_output}
+    report['gpu_memory'] = f"{gpu_memory / (1024 ** 3):.2f} GB"
+    with open(f"report/{strategy}.json", 'w') as f:
+        json.dump(report, f)
 
 
 
@@ -72,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('-strategy', required=True)
 
     args = parser.parse_args()
-    assert args.strategy.lower() in ['none', 'fp16', 'grad_accumulation', 
+    assert args.strategy.lower() in ['vanilla', 'fp16', 'grad_accumulation', 
                                      'grad_checkpointing', 'adafactor', 'all']
 
     main(args.strategy)
