@@ -41,35 +41,60 @@ Adafactor is one of the optimizers which can alleviate the aforementioned memory
 
 ## Experimental Setups
 
-### Common Setups
-* **Model** : T5 Small <br>
-* **Dataset** : WMT14 En-De Translation Dataset (Train: 10,000 / Valid: 1,000 / Test 1,000 each) <br>
-* **Batch Size**: 32 <br>
-* **Device**: GPU <br><br>
+### Data and Model Setup
+* **Data** <br> 
+  For this experiment, small fetched AG_News Dataset has used.  
+  Train, Valid, Test Datasets have 1000, 100, 100 volumns each. 
+  And all data element has distributed in equal ratio according to labels.
+  
+* **Model** <br> 
+  For this experiment, we utilized the widely recognized NLP model, BERT, with the specific model name being 'bert-base-uncased.' 
+  The model comprises a total of 109,485,316 parameters. 
+  Apart from the addition of a Linear layer for the classification task, the configuration remains consistent with the default settings of BERT.
 
+<br>
 
-### Strategy Setups
+### Training Setup
+```
+TrainingArguments(
+        output_dir= f'ckpt/{strategy}',
+        num_train_epochs= 5,
+        learning_rate= 1e-5,
+        per_device_train_batch_size= 32,
+        per_device_eval_batch_size= 32,
+        lr_scheduler_type='reduce_lr_on_plateau',
+        load_best_model_at_end= True,
 
-|  | Strategy_01 | Strategy_02 | Strategy_03 | Strategy_04 | Strategy_05 |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **Mixed precision training** | N | Y | Y | Y | Y |
-| **Gradient accumulation**    | N | N | Y | Y | Y |
-| **Gradient checkpointing**   | N | N | N | Y | Y |
-| **Optimizer choice**         | N | N | N | N | Y |
+        save_strategy= 'epoch',
+        logging_strategy= 'epoch',
+        evaluation_strategy= 'epoch',
+
+        fp16= True if config.strategy in ['fp16', 'all'] else False,
+        fp16_opt_level= '02' if config.strategy in ['fp16', 'all'] else '01',
+        gradient_accumulation_steps = True if config.strategy in ['grad_accumulation', 'all'] else 4,
+        gradient_checkpointing= True if config.strategy in ['grad_checkpointing', 'all'] else False,
+        optim = 'adafactor' if config.strategy in ['optim', 'all'] else 'adamw_torch'
+    )
+```
+
 
 <br><br>
 
 ## Result
 
-|  | Strategy_01 | Strategy_02 | Strategy_03 | Strategy_04 | Strategy_05 |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **Training Time**            | - | - | - | - | - |
-| **Best Valid Loss**          | - | - | - | - | - |
+| Training Strategy | Training Time | GPU Occupation | Accuracy |
+| :---: | :---: | :---: | :---: |
+| Vanilla                | &nbsp; 174 sec &nbsp; (100%) | &nbsp; 7.00 GB &nbsp; (100%) | 79% | 
+| FP 16                  | &nbsp;  69 sec &nbsp;  (40%) | &nbsp; 5.47 GB &nbsp;  (78%) | 78% |
+| Gradient Accumulation  | &nbsp; 182 sec &nbsp; (105%) | &nbsp; 6.29 GB &nbsp;  (90%) | 83% |
+| Gradient Checkpoining  | &nbsp; 239 sec &nbsp; (137%) | &nbsp; 3.54 GB &nbsp;  (51%) | 79% |
+| AdaFactor Optimization | &nbsp; 179 sec &nbsp; (103%) | &nbsp; 6.72 GB &nbsp;  (96%) | 79% |
+| All Applied            | &nbsp;  85 sec &nbsp;  (49%) | &nbsp; 2.91 GB &nbsp;  (41%) | 80% |
 
 
-<br>
-<br>
+<br><br>
 
 ## Reference
-**[LightSeq: A High Performance Inference Library for Transformers](https://arxiv.org/pdf/2010.13887.pdf)** <br>
 **[HuggingFace Efficient Training Docs](https://huggingface.co/docs/transformers/perf_train_gpu_one)**
+
+<br>
