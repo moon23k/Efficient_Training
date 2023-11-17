@@ -6,8 +6,9 @@ from datasets import load_dataset
 
 def fetch_agnews(orig_data):
     fetched = []
-    tot_volumn = 12000
-    class_volumn = 12000 // 4
+    max_len = 300
+    tot_volumn = 1200
+    class_volumn = 1200 // 4
     class1_cnt, class2_cnt, class3_cnt, class4_cnt = 0, 0, 0, 0
     class1_data, class2_data, class3_data, class4_data = [], [], [], []
 
@@ -18,6 +19,9 @@ def fetch_agnews(orig_data):
             break
 
         text = elem['text'].lower()
+        if len(text) > max_len:
+            continue
+            
         text = re.sub(r'\\+', ' ', text)
         text = re.sub(r'\s{2,}', ' ', text)
         text = re.sub(r'&lt;b&gt;', ' ', text)
@@ -51,9 +55,9 @@ def fetch_agnews(orig_data):
 
 
 def split_shuffle(fetched):
-    train_data = fetched[:-2000]
-    valid_data = fetched[-2000:-1000]
-    test_data = fetched[-1000:]
+    train_data = fetched[:-200]
+    valid_data = fetched[-200:-100]
+    test_data = fetched[-100:]
 
     random.shuffle(train_data)
     random.shuffle(valid_data)

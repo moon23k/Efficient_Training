@@ -28,8 +28,8 @@ class Dataset(torch.utils.data.Dataset):
 
 def load_dataset(tokenizer, split):
     dataset = datasets.Dataset.from_json(f'data/{split}.json')    
-    encodings = tokenizer(dataset['text'], padding=True, truncation=True, return_tensors='pt')    
-    dataset = Dataset(encodings, dataset['label'])
+    encodings = tokenizer(dataset['x'], padding=True, truncation=True, return_tensors='pt')    
+    dataset = Dataset(encodings, dataset['y'])
     return dataset
 
 
@@ -54,7 +54,7 @@ def set_trainer(config, model, tokenizer, train_dataset, valid_dataset):
 
         fp16= True if config.strategy in ['fp16', 'all'] else False,
         fp16_opt_level= '02' if config.strategy in ['fp16', 'all'] else '01',
-        gradient_accumulation_steps = True if config.strategy in ['grad_accumulation', 'all'] else 4,
+        gradient_accumulation_steps = 1 if config.strategy in ['grad_accumulation', 'all'] else 4,
         gradient_checkpointing= True if config.strategy in ['grad_checkpointing', 'all'] else False,
         optim = 'adafactor' if config.strategy in ['optim', 'all'] else 'adamw_torch'
     )
